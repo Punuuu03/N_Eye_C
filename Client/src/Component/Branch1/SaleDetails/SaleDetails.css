@@ -1,153 +1,196 @@
-/* General Styles */
 .sale-details-container {
+  width: 100%;
   max-width: 800px;
-  margin: 20px auto;
+  margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-left: 620px;
-  margin-top: -70px;
+  font-family: Arial, sans-serif;
+  border: 1px solid #000;
 }
-.ho{
-  font-size: 17px;
-  text-align: center;
-  margin-top: -10px;
+.bor{
+  border: 1px solid black;
+  /* margin: 20px; */
+  padding:30px;
+
 }
-#scc {
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-  color: #333;
-  margin-bottom: 10px;
+.add{
+  width: 100px;
+}
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+ 
   font-weight: bold;
-  font-size: 30px;
+  
+  /* margin-left: 0px; */
+  /* padding: 30px; */
 }
 
-.add {
-  text-align: center;
-  font-size: 16px;
-  font-family: Arial, Helvetica, sans-serif;
-  margin-top: -27px;
+.logo img {
+  max-height: 50px; /* Adjust the max height as needed */
+  width: auto; /* Maintains aspect ratio */
+  margin-left: 10px;
+  /* margin-top: -1000px; */
+  /* margin-right: 300px; */
 }
 
-.em {
-  text-align: center;
-  font-size: 16px;
-  font-family: Arial, Helvetica, sans-serif;
+.invoice-header p{
   margin-top: -10px;
+  font-size: 15px;
 }
 
-.th {
+/* SaleDetails.css */
+/* SaleDetails.css */
+
+
+
+.company-details {
   text-align: center;
-  margin-top: 30px;
 }
 
-.te {
-  text-align: center;
+.gst-number {
+  text-align: right;
+  margin-top: -100px;
+  /* margin-right: 200px; */
+  /* display: inline; */
+  /* justify-content: flex-end; */
 }
 
-.sale-details-table, 
+.customer-info {
+  display: flex;
+  flex-direction: column;
+  /* margin-bottom: 10px; */
+  font-weight: bold;
+}
+
+.customer-row, .customer-row1 {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.customer-row2 {
+  display: flex;
+  justify-content: flex-end;
+  /* margin-bottom: 10px; */
+  
+}
+
+
+.customer-row p,
+.customer-row1 p,
+.customer-row2 p {
+  margin: 0;
+  padding: 0;
+}
+
+.customer-row p strong,
+.customer-row1 p strong,
+.customer-row2 p strong {
+  font-weight: bold;
+}
+
+.products-section {
+  margin-top: 20px;
+}
+
 .products-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.sale-details-table th, 
-.sale-details-table td, 
-.products-table th, 
-.products-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-  font-family: 'Arial', sans-serif;
-}
-
-.sale-details-table th, 
-.products-table th {
-  background-color: #f2f2f2;
-  color: #333;
 }
 
 .products-table thead th {
-  background-color: #e6e6e6;
+  border: 1px solid #ccc;
+  background-color: #ffffff; 
+  padding: 8px;
+  text-align: left;
 }
 
-.total-label {
-  text-align: right;
+.products-table tbody td {
+  border: none; 
+  padding: 8px;
+  text-align: left;
+  font-size: 17px;
+}
+
+
+.products-table th,
+.products-table td {
+  vertical-align: middle;
+}
+
+
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
   font-weight: bold;
 }
 
-.final-total {
-  font-weight: bold;
-  color: #333;
-}
-
-.print-bill-button {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-family: 'Arial', sans-serif;
-  color: #fff;
-  background-color: #3e72ab;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
-  margin-top: 20px;
-  margin-left: 270px;
-}
-
-.print-bill-button:hover {
-  background-color: #6c93bd;
-}
-
-/* New Sale Summary Row Style */
-.sale-summary-row {
+.payment-itm1, .payment-itm2 {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
-  font-family: 'Arial', sans-serif;
+  margin-bottom: 10px;
 }
 
-/* Print Styles */
+
+
+.payment-itm1 p,
+.payment-itm2 p
+ {
+  margin: 0;
+  padding: 0;
+}
+
+
+
+.eye-details-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.eye-details-table {
+  border-collapse: collapse;
+  width: 45%; /* Adjust width as needed */
+  margin: 0 10px; /* Optional margin between tables */
+}
+
+.eye-details-table caption {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.eye-details-table th, .eye-details-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left; /* Aligns text to the left in cells */
+}
+
+.eye-details-table th {
+  background-color: #f4f4f4; /* Background color for header cells */
+}
+
+.terms {
+  margin-top: 25px;
+}
+
+
+/* SaleDetails.css */
+
+/* Styles for screen (default) */
+.print-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #307dc1;
+}
+
+/* Styles for print */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-
-  .sale-details-container, 
-  .sale-details-container * {
-    visibility: visible;
-  }
-
-  .sale-details-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    box-shadow: none;
-    border: none;
-  }
-
-  .sale-details-container h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-
-  .sale-details-table th, 
-  .sale-details-table td, 
-  .products-table th, 
-  .products-table td {
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #333;
-  }
-
-  .print-bill-button {
+  .print-button {
     display: none;
   }
 }

@@ -10,8 +10,6 @@ const EditProduct = () => {
     const [price, setPrice] = useState('');
     const [stock, setStock] = useState('');
     const [productId, setProductId] = useState('');
-    const [leftEye, setLeftEye] = useState('');
-    const [rightEye, setRightEye] = useState('');
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
     const [message, setMessage] = useState('');
@@ -26,8 +24,6 @@ const EditProduct = () => {
                     setPrice(product.price);
                     setStock(product.stock);
                     setProductId(product.product_id);
-                    setLeftEye(product.left_eye);
-                    setRightEye(product.right_eye);
                     setPreview(product.image_url); // Assuming your API provides an image URL
                 } else {
                     setMessage(`Error: ${response.data.Error}`);
@@ -59,8 +55,6 @@ const EditProduct = () => {
         formData.append('price', price);
         formData.append('stock', stock);
         formData.append('product_id', productId);
-        formData.append('left_eye', leftEye);
-        formData.append('right_eye', rightEye);
         formData.append('image', image);
 
         try {
@@ -144,32 +138,6 @@ const EditProduct = () => {
                                         id="product-id"
                                         value={productId}
                                         onChange={(e) => setProductId(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div className="form-row">
-                                <div className="input-group">
-                                    <label htmlFor="left-eye">Left Eye</label>
-                                    <input
-                                        type="number"
-                                        id="left-eye"
-                                        value={leftEye}
-                                        onChange={(e) => setLeftEye(e.target.value)}
-                                        step="0.01"
-                                        min="0"
-                                        required
-                                    />
-                                </div>
-                                <div className="input-group">
-                                    <label htmlFor="right-eye">Right Eye</label>
-                                    <input
-                                        type="number"
-                                        id="right-eye"
-                                        value={rightEye}
-                                        onChange={(e) => setRightEye(e.target.value)}
-                                        step="0.01"
-                                        min="0"
                                         required
                                     />
                                 </div>

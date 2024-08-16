@@ -48,6 +48,7 @@ const AddSupplier = () => {
                                 id="supplier-name"
                                 className="form-input"
                                 type="text" 
+                                placeholder='Enter Name'
                                 value={name} 
                                 onChange={(e) => setName(e.target.value)} 
                                 required 
@@ -61,6 +62,7 @@ const AddSupplier = () => {
                             <input 
                                 id="supplier-phone-number"
                                 className="form-input"
+                                placeholder='Enter Phone Number'
                                 type="text" 
                                 value={phoneNumber} 
                                 onChange={(e) => setPhoneNumber(e.target.value)} 
@@ -76,6 +78,7 @@ const AddSupplier = () => {
                             <input 
                                 id="supplier-address"
                                 className="form-input"
+                                placeholder='Enter Address'
                                 type="text" 
                                 value={address} 
                                 onChange={(e) => setAddress(e.target.value)} 
@@ -89,6 +92,7 @@ const AddSupplier = () => {
                             <input 
                                 id="supplier-email"
                                 className="form-input"
+                                placeholder='Enter Email'
                                 type="email" 
                                 value={email} 
                                 onChange={(e) => setEmail(e.target.value)} 

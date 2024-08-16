@@ -5,11 +5,9 @@ import "./AddProduct.css";
 
 const AddProduct = () => {
   const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [productId, setProductId] = useState("");
-  const [leftEye, setLeftEye] = useState(0);
-  const [rightEye, setRightEye] = useState(0);
+  const [price, setPrice] = useState("0");
+  const [stock, setStock] = useState("0");
+  const [productId, setProductId] = useState("0");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
@@ -30,8 +28,6 @@ const AddProduct = () => {
     formData.append("price", price);
     formData.append("stock", stock);
     formData.append("product_id", productId);
-    formData.append("left_eye", leftEye);
-    formData.append("right_eye", rightEye);
     if (image) formData.append("image", image);
 
     try {
@@ -51,8 +47,6 @@ const AddProduct = () => {
         setPrice("");
         setStock("");
         setProductId("");
-        setLeftEye(0);
-        setRightEye(0);
         setImage(null);
         setPreview(null);
         navigate("/Component/Branch1/ProductList/ProductList"); // Navigate to the ProductList component
@@ -74,7 +68,6 @@ const AddProduct = () => {
               <img src={preview} alt="Preview" />
             ) : (
               <div className="file-upload-group">
-                {/* <label htmlFor="image-upload">Product Image</label> */}
                 <input
                   type="file"
                   id="image-upload"
@@ -92,6 +85,7 @@ const AddProduct = () => {
                   <input
                     type="text"
                     id="product-name"
+                    placeholder="Enter Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -127,32 +121,6 @@ const AddProduct = () => {
                     id="product-id"
                     value={productId}
                     onChange={(e) => setProductId(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="input-group">
-                  <label htmlFor="left-eye">Left Eye</label>
-                  <input
-                    type="number"
-                    id="left-eye"
-                    value={leftEye}
-                    onChange={(e) => setLeftEye(e.target.value)}
-                    step="0.01"
-                    min="0"
-                    required
-                  />
-                </div>
-                <div className="input-group">
-                  <label htmlFor="right-eye">Right Eye</label>
-                  <input
-                    type="number"
-                    id="right-eye"
-                    value={rightEye}
-                    onChange={(e) => setRightEye(e.target.value)}
-                    step="0.01"
-                    min="0"
                     required
                   />
                 </div>

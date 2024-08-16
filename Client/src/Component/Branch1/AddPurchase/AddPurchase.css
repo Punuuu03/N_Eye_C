@@ -62,6 +62,7 @@ html, body {
   background-size: 12px;
   font-size: 18px;
   border: 1px solid rgba(0, 0, 0, 0.2); /* Remove border */
+  word-break: break-word; /* Added word-break to prevent overflowing content */
 }
 
 .add-purchase-form .new-row-btn,
@@ -89,6 +90,7 @@ html, body {
 .purchase-items-table {
   width: 100%;
   margin-bottom: 25px; /* Increased margin for better spacing */
+  table-layout: fixed; /* Ensures equal width for all columns */
 }
 
 .purchase-items-table th,
@@ -99,6 +101,7 @@ html, body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect */
   font-size: 18px;
   border: none; /* Remove border */
+  word-break: break-word; /* Prevents content from overflowing the cell */
 }
 
 .purchase-items-table th {
@@ -114,6 +117,7 @@ html, body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect */
   font-size: 18px;
   border: none; /* Remove border */
+  word-break: break-word; /* Prevents input content overflow */
 }
 
 .purchase-items-table td button {

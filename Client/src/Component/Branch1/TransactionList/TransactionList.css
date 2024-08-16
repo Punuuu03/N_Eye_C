@@ -5,10 +5,6 @@
     margin-left: 50px; 
     box-sizing: border-box; /* Include padding in the width */
     top: 0; /* Ensure it starts at the top */
-    /* margin-top: -60px; */
-    /* overflow: hidden; */
-    /* overflow-x: hidden; Hide horizontal scrollbar */
-    /* overflow-y: hidden; Hide vertical scrollbar */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: #c2cbe5b4;
 }
@@ -62,8 +58,6 @@
 /* Table wrapper styling */
 #transaction-list-table-wrapper {
     width: 100%; /* Ensure the wrapper spans the full width of the container */
-    /* overflow-x: hidden; Hide horizontal scrollbar */
-    /* overflow-y: hidden; Hide vertical scrollbar */
 }
 
 /* Table styling */
@@ -89,6 +83,9 @@
     height: 41px;
     font-size: 20px;
     font-weight: bold;
+    word-wrap: break-word; /* Wrap long words onto the next line */
+    overflow-wrap: break-word; /* Ensure text wraps within the cell */
+    word-break: break-word; /* Break words if needed to fit */
 }
 
 /* Table body cells styling */
@@ -99,19 +96,20 @@
     height: 45px;
     font-size: 18px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    word-wrap: break-word; /* Wrap long words onto the next line */
+    overflow-wrap: break-word; /* Ensure text wraps within the cell */
+    word-break: break-word; /* Break words if needed to fit */
 }
 
 /* Set column widths */
-
 #transaction-list-table th:nth-child(3),
-#transaction-list-table td:nth-child(3){
+#transaction-list-table td:nth-child(3) {
     width: 200px; /* Width for Product Names */
 }
 #transaction-list-table th:nth-child(1),
 #transaction-list-table td:nth-child(1),
 #transaction-list-table th:nth-child(2),
 #transaction-list-table td:nth-child(2),
-
 #transaction-list-table th:nth-child(4),
 #transaction-list-table td:nth-child(4),
 #transaction-list-table th:nth-child(5),

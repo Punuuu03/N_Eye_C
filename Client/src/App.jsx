@@ -58,7 +58,7 @@ const router = createBrowserRouter([
     element: <Layout1><AddCustomer1 /></Layout1>
   },
   {
-    path: '/Component/Branch1/EditCustomer/EditCustomer/:id',
+    path: '/Component/Branch1/EditCustomer/EditCustomer/:customer_id',
     element: <Layout1><EditCustomer1 /></Layout1>
   },
   {

@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 const createNewPurchaseItem = () => ({
   productId: '',
-  productDetails: { price: '', stock: '' },
-  purchasePrice: '',
-  quantity: '',
+  productDetails: { price: '0', stock: '0' },
+  purchasePrice: '0',
+  quantity: '0',
   itemTotal: 0,
 });
 
@@ -195,7 +195,7 @@ const AddPurchase = () => {
                   ))}
                 </select>
               </td>
-              <td>{item.productDetails.price}</td>
+              <td className='MRP'>{item.productDetails.price}</td>
               <td>
                 <input
                   type="number"
@@ -212,8 +212,8 @@ const AddPurchase = () => {
                   required
                 />
               </td>
-              <td>{item.productDetails.stock}</td>
-              <td>{item.itemTotal.toFixed(2)}</td>
+              <td className='MRP'>{item.productDetails.stock}</td>
+              <td className='MRP'>{item.itemTotal.toFixed(2)}</td>
               <td>
                 <button type="button" onClick={() => handleRemoveProduct(index)}>Remove</button>
               </td>

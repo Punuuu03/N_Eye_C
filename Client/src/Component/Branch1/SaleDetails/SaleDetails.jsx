@@ -2,16 +2,23 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import './SaleDetails.css';
+import kolo from '../../../assets/logo.jpg';
 
 const SaleDetails = () => {
   const { id } = useParams();
   const [sale, setSale] = useState(null);
+  const [customerEyeDetails, setCustomerEyeDetails] = useState({
+    left_eye_addition: '',
+    right_eye_addition: '',
+  });
+  const [customerDetails, setCustomerDetails] = useState({ name: '', phone: '' });
 
   useEffect(() => {
     const fetchSaleDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/shala/sale-details/${id}`);
-        console.log('API Response:', response.data); // Log response for debugging
+        const response = await axios.get(`http://localhost:3000/wala/shala/sale-details/${id}`);
+        console.log('API Response:', response.data);
+        
         const saleData = response.data;
 
         if (typeof saleData.product_details === 'string') {
@@ -21,8 +28,36 @@ const SaleDetails = () => {
         }
 
         setSale(saleData);
+
+        const customerResponse = await axios.get(`http://localhost:3000/shala/customers/${saleData.customer_id}`);
+        setCustomerDetails({
+          name: customerResponse.data.name,
+          phone: customerResponse.data.phone,
+        });
+
+        setCustomerEyeDetails({
+          left_eye_dv_spherical: customerResponse.data.left_eye_dv_spherical,
+          left_eye_dv_cylindrical: customerResponse.data.left_eye_dv_cylindrical,
+          left_eye_dv_axis: customerResponse.data.left_eye_dv_axis,
+          left_eye_dv_vn: customerResponse.data.left_eye_dv_vn,
+          left_eye_nv_spherical: customerResponse.data.left_eye_nv_spherical,
+          left_eye_nv_cylindrical: customerResponse.data.left_eye_nv_cylindrical,
+          left_eye_nv_axis: customerResponse.data.left_eye_nv_axis,
+          left_eye_nv_vn: customerResponse.data.left_eye_nv_vn,
+          right_eye_dv_spherical: customerResponse.data.right_eye_dv_spherical,
+          right_eye_dv_cylindrical: customerResponse.data.right_eye_dv_cylindrical,
+          right_eye_dv_axis: customerResponse.data.right_eye_dv_axis,
+          right_eye_dv_vn: customerResponse.data.right_eye_dv_vn,
+          right_eye_nv_spherical: customerResponse.data.right_eye_nv_spherical,
+          right_eye_nv_cylindrical: customerResponse.data.right_eye_nv_cylindrical,
+          right_eye_nv_axis: customerResponse.data.right_eye_nv_axis,
+          right_eye_nv_vn: customerResponse.data.right_eye_nv_vn,
+          // Fetching addition data
+          left_eye_addition: customerResponse.data.left_eye_addition,
+          right_eye_addition: customerResponse.data.right_eye_addition,
+        });
       } catch (error) {
-        console.error('Error fetching sale details:', error);
+        console.error('Error fetching sale details or customer details:', error);
       }
     };
 
@@ -35,80 +70,163 @@ const SaleDetails = () => {
     return <div>Loading...</div>;
   }
 
-  // Calculate the total for each product and the final total
   const finalTotal = sale.products.reduce((total, product) => {
-    const productTotal = product.sale_price * product.quantity;
+    const productTotal = product.product_price * product.quantity;
     return total + productTotal;
   }, 0);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="sale-details-container">
-      <button onClick={() => window.print()} className="print-bill-button">
-        Print Bill
-      </button>
-      <h2 id='scc'>New Eye Care</h2>
-      <h6 className='ho'>Optics & Contact Lense Clinic</h6>
-      <p className='add'>Add: S.No. 34/2 Gurudware Chowk, Balaji Nagar, 
-        <br></br>Near Akurdi Railway Station, Pune-411033</p>
-      <p className='em'>8669309353 Email: neweyecare1@gmail.com</p>
-<hr></hr>
-      <div className="customer-info">
-        <div>
-          <strong>Customer Name:</strong> {sale.customer_name}
+      <div className="bor">
+        <header className="invoice-header">
+          <div className="logo">
+            <img src={kolo} className="kolo" alt="Company Logo" />
+          </div>
+          <div className="company-details">
+            <h2>New Eye Care</h2>
+            <p>9922177297</p>
+          </div>
+          <div className="gst-number">
+            <p>GSTIN: </p>
+          </div>
+        </header>
+
+        <hr />
+
+        <div className="customer-info">
+          <div className="customer-row">
+            <p><strong>Name:</strong> {customerDetails.name}</p>
+            <p><strong>Receipt No:</strong> {sale.sale_id}</p>
+          </div>
+
+          <div className="customer-row1">
+            <p><strong>Mobile No:</strong> {customerDetails.phone}</p>
+            <p><strong>Receipt Date:</strong> {new Date(sale.created_at).toLocaleDateString()}</p>
+          </div>
+
+          <div className="customer-row2">
+            <p><strong>Time:</strong> {new Date(sale.created_at).toLocaleTimeString()}</p>
+          </div>
         </div>
-        <div>
-          <strong>Customer Phone Number:</strong> {sale.customer_phone}
+
+        <div className="products-section">
+          <table className="products-table">
+            <thead>
+              <tr>
+                <th>Sn.</th>
+                <th>Particulars</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Dis.</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sale.products.map((product, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{product.product_name}</td>
+                  <td>{product.quantity}</td>
+                  <td>{product.product_price}</td>
+                  <td>{sale.order_discount}</td>
+                  <td>{(product.product_price * product.quantity).toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <div>
-          <strong>Sales Date:</strong> {new Date(sale.created_at).toLocaleDateString('en-GB')}
+
+        <hr />
+
+        <div className="payment-details">
+          <div className="payment-itm1">
+            <p><strong>Payment Mode:</strong> {sale.payment_method}</p>
+            <p><strong>Total Amt:</strong> {finalTotal.toFixed(2)}</p>
+          </div>
+          <div className="payment-itm2">
+            <p><strong>Paid Amt:</strong> {sale.paid}</p>
+            <p><strong>Balance Amt:</strong> {(finalTotal - sale.paid).toFixed(2)}</p>
+          </div>
+        </div>
+
+        <div className="eye-details-container">
+          <table className="eye-details-table">
+            <caption>Right Eye</caption>
+            <thead>
+              <tr>
+                <th>Eye</th>
+                <th>SPH</th>
+                <th>CYL</th>
+                <th>AXIS</th>
+                <th>V/N</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>DV</td>
+                <td>{customerEyeDetails.right_eye_dv_spherical}</td>
+                <td>{customerEyeDetails.right_eye_dv_cylindrical}</td>
+                <td>{customerEyeDetails.right_eye_dv_axis}</td>
+                <td>{customerEyeDetails.right_eye_dv_vn}</td>
+              </tr>
+              <tr>
+                <td>NV</td>
+                <td>{customerEyeDetails.right_eye_nv_spherical}</td>
+                <td>{customerEyeDetails.right_eye_nv_cylindrical}</td>
+                <td>{customerEyeDetails.right_eye_nv_axis}</td>
+                <td>{customerEyeDetails.right_eye_nv_vn}</td>
+              </tr>
+              <tr>
+                <td>Right Eye Addition</td>
+                <td colSpan="4" className="add">{customerEyeDetails.right_eye_addition}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table className="eye-details-table">
+            <caption>Left Eye</caption>
+            <thead>
+              <tr>
+                <th>Eye</th>
+                <th>SPH</th>
+                <th>CYL</th>
+                <th>AXIS</th>
+                <th>V/N</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>DV</td>
+                <td>{customerEyeDetails.left_eye_dv_spherical}</td>
+                <td>{customerEyeDetails.left_eye_dv_cylindrical}</td>
+                <td>{customerEyeDetails.left_eye_dv_axis}</td>
+                <td>{customerEyeDetails.left_eye_dv_vn}</td>
+              </tr>
+              <tr>
+                <td>NV</td>
+                <td>{customerEyeDetails.left_eye_nv_spherical}</td>
+                <td>{customerEyeDetails.left_eye_nv_cylindrical}</td>
+                <td>{customerEyeDetails.left_eye_nv_axis}</td>
+                <td>{customerEyeDetails.left_eye_nv_vn}</td>
+              </tr>
+              <tr>
+                <td>Left Eye Addition</td>
+                <td colSpan="4" className="add">{customerEyeDetails.left_eye_addition}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <hr></hr>
+        <div className='term'>
+          <p><strong>Termas & Conditions:</strong></p>
         </div>
         
       </div>
-
-      <div className="products-section">
-        <table className="products-table">
-          <thead>
-            <tr>
-              <th>Product Name</th>
-              <th>Sale Price</th>
-              <th>Quantity</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sale.products.map((product, index) => {
-              const productTotal = product.sale_price * product.quantity;
-              return (
-                <tr key={index}>
-                  <td>{product.product_name}</td>
-                  <td>{product.sale_price}</td>
-                  <td>{product.quantity}</td>
-                  <td>{productTotal.toFixed(2)}</td>
-                </tr>
-              );
-            })}
-            <tr>
-              <td colSpan="3" className="total-label">Final Total:</td>
-              <td className="final-total">{finalTotal.toFixed(2)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div className="sale-summary-row">
-        <div>
-          <strong>Discount %:</strong> {sale.order_discount}
-        </div>
-        <div>
-          <strong>Payment Mode:</strong> {sale.payment_method}
-        </div>
-        <div>
-          <strong>Amount Paid:</strong> {sale.paid}
-        </div>
-      </div>
-<hr></hr>
-      <p className='th'>Thank you for your purchase</p>
-      <p className='te'>Technopuls Softwares | Contact: +918669048580</p>
+      <button className="print-button" onClick={handlePrint}>Print</button>
     </div>
   );
 };

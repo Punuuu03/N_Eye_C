@@ -17,17 +17,17 @@ app.use(express.json());
 app.use(cors());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from the "uploads" directory
 
-const port = process.env.PORT || 3000;
+const port = 3000; // Keep the port here
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
 const db = mysql.createConnection({
-    user: 'root',
-    host: 'localhost',
-    password: '', 
-    database: 'new_eye',
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
 });
 
 const storage = multer.diskStorage({
@@ -51,6 +51,8 @@ db.connect(err => {
 
 app.use(express.json()); // Use built-in middleware to parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+
+
 
 // Get all products
 app.get('/api/products', (req, res) => {
@@ -83,11 +85,11 @@ app.get('/api/products/:id', (req, res) => {
 
 
 app.post('/api/products', upload.single('image'), (req, res) => {
-  const { name, price, stock, product_id, left_eye, right_eye } = req.body;
+  const { name, price, stock, product_id } = req.body;
   const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-  const sql = 'INSERT INTO products (branch, name, price, stock, product_id, left_eye, right_eye, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-  const values = [1, name, price, stock, product_id, left_eye, right_eye, image];
+  const sql = 'INSERT INTO products (branch, name, price, stock, product_id, image) VALUES (?, ?, ?, ?, ?, ?)';
+  const values = [1, name, price, stock, product_id, image];
   db.query(sql, values, (err, results) => {
       if (err) {
           console.error('Error adding product:', err);
@@ -102,11 +104,11 @@ app.post('/api/products', upload.single('image'), (req, res) => {
 // Update a product by ID
 app.put('/api/products/:id', upload.single('image'), (req, res) => {
   const productId = req.params.id;
-  const { name, price, stock, product_id,left_eye,right_eye } = req.body; // Add product_id to destructured values
+  const { name, price, stock, product_id } = req.body; // Add product_id to destructured values
   const image = req.file ? `/uploads/${req.file.filename}` : req.body.image; // Use existing image path if not updated
 
-  const sql = 'UPDATE products SET name = ?, price = ?, stock = ?, image = ?, product_id = ?, left_eye=?, right_eye=? WHERE id = ?';
-  const values = [name, price, stock, image, product_id,left_eye,right_eye, productId]; // Include product_id in values array
+  const sql = 'UPDATE products SET name = ?, price = ?, stock = ?, image = ?, product_id = ? WHERE id = ?';
+  const values = [name, price, stock, image, product_id, productId]; // Include product_id in values array
 
   db.query(sql, values, (err) => {
       if (err) {
@@ -170,84 +172,249 @@ app.get('/branch1/customers', (req, res) => {
     });
 });
 
-// Get a single customer by ID
-app.get('/branch1/customers/:id', (req, res) => {
-    const customerId = req.params.id;
-    const sql = 'SELECT * FROM customers WHERE id = ?';
-    db.query(sql, [customerId], (err, results) => {
-        if (err) {
-            console.error('Error fetching customer:', err);
-            return res.status(500).json({ Status: false, Error: 'Database error' });
-        }
-        if (results.length > 0) {
-            res.json({ Status: true, Result: results[0] });
-        } else {
-            res.status(404).json({ Status: false, Error: 'Customer not found' });
-        }
-    });
+
+
+
+
+
+// Endpoint to get customer details
+app.get('/branch1/customers/:customer_id', (req, res) => {
+  const customer_id = req.params.customer_id;
+
+  // Fetch customer details
+  const sql = `
+    SELECT 
+      customer_id,
+      name,
+      phone,
+      email,
+      address,
+      date_of_birth,
+      gender,
+      left_eye_dv_spherical,
+      left_eye_dv_cylindrical,
+      left_eye_dv_axis,
+      left_eye_dv_vn,
+      left_eye_nv_spherical,
+      left_eye_nv_cylindrical,
+      left_eye_nv_axis,
+      left_eye_nv_vn,
+      right_eye_dv_spherical,
+      right_eye_dv_cylindrical,
+      right_eye_dv_axis,
+      right_eye_dv_vn,
+      right_eye_nv_spherical,
+      right_eye_nv_cylindrical,
+      right_eye_nv_axis,
+      right_eye_nv_vn,
+      left_eye_addition,
+      right_eye_addition
+    FROM customers
+    WHERE customer_id = ?
+  `;
+
+  db.query(sql, [customer_id], (err, result) => {
+    if (err) {
+      console.error('Error fetching customer:', err);
+      return res.status(500).json({ Status: false, Error: 'Database error occurred' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ Status: false, Error: 'Customer not found' });
+    }
+
+    res.json({ Status: true, Result: result[0] });
+  });
 });
 
-app.put('/branch1/customers/:id', (req, res) => {
-  const customerId = req.params.id;
-  const { name, phone, email, address, date_of_birth, gender } = req.body;
+// Endpoint to update customer details
+app.put('/branch1/customers/:customer_id', (req, res) => {
+  const customer_id = req.params.customer_id;
+  const {
+    name,
+    phone,
+    email,
+    address,
+    date_of_birth,
+    gender,
+    left_eye_dv_spherical,
+    left_eye_dv_cylindrical,
+    left_eye_dv_axis,
+    left_eye_dv_vn,
+    left_eye_nv_spherical,
+    left_eye_nv_cylindrical,
+    left_eye_nv_axis,
+    left_eye_nv_vn,
+    right_eye_dv_spherical,
+    right_eye_dv_cylindrical,
+    right_eye_dv_axis,
+    right_eye_dv_vn,
+    right_eye_nv_spherical,
+    right_eye_nv_cylindrical,
+    right_eye_nv_axis,
+    right_eye_nv_vn,
+    left_eye_addition,
+    right_eye_addition
+  } = req.body;
 
-  console.log('Updating customer:', {
-      name, phone, email, address, date_of_birth, gender, customerId
-  });
+  // Validate input
+  if (!name || !phone || !email || !address || !date_of_birth || !gender) {
+    return res.status(400).json({ Status: false, Error: 'Required fields are missing' });
+  }
 
-  const sql = 'UPDATE customers SET name = ?, phone = ?, email = ?, address = ?, date_of_birth = ?, gender = ? WHERE id = ?';
-  const values = [name, phone, email, address, date_of_birth, gender, customerId];
+  // Update customer details
+  const sql = `
+    UPDATE customers
+    SET 
+      name = ?,
+      phone = ?,
+      email = ?,
+      address = ?,
+      date_of_birth = ?,
+      gender = ?,
+      left_eye_dv_spherical = ?,
+      left_eye_dv_cylindrical = ?,
+      left_eye_dv_axis = ?,
+      left_eye_dv_vn = ?,
+      left_eye_nv_spherical = ?,
+      left_eye_nv_cylindrical = ?,
+      left_eye_nv_axis = ?,
+      left_eye_nv_vn = ?,
+      right_eye_dv_spherical = ?,
+      right_eye_dv_cylindrical = ?,
+      right_eye_dv_axis = ?,
+      right_eye_dv_vn = ?,
+      right_eye_nv_spherical = ?,
+      right_eye_nv_cylindrical = ?,
+      right_eye_nv_axis = ?,
+      right_eye_nv_vn = ?,
+      left_eye_addition = ?,
+      right_eye_addition = ?
+    WHERE customer_id = ?
+  `;
 
-  db.query(sql, values, (err) => {
-      if (err) {
-          console.error('Error updating customer:', err);
-          return res.status(500).json({ Status: false, Error: 'Database error' });
-      }
-      res.json({ Status: true, message: 'Customer updated successfully' });
+  const params = [
+    name,
+    phone,
+    email,
+    address,
+    date_of_birth,
+    gender,
+    left_eye_dv_spherical,
+    left_eye_dv_cylindrical,
+    left_eye_dv_axis,
+    left_eye_dv_vn,
+    left_eye_nv_spherical,
+    left_eye_nv_cylindrical,
+    left_eye_nv_axis,
+    left_eye_nv_vn,
+    right_eye_dv_spherical,
+    right_eye_dv_cylindrical,
+    right_eye_dv_axis,
+    right_eye_dv_vn,
+    right_eye_nv_spherical,
+    right_eye_nv_cylindrical,
+    right_eye_nv_axis,
+    right_eye_nv_vn,
+    left_eye_addition,
+    right_eye_addition,
+    customer_id
+  ];
+
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      console.error('Error updating customer:', err);
+      return res.status(500).json({ Status: false, Error: 'Database error occurred' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ Status: false, Error: 'Customer not found' });
+    }
+
+    res.json({ Status: true, Result: 'Customer updated successfully!' });
   });
 });
 
 
-// Add a new customer with branch column set to 1
 app.post('/branch1/customers', (req, res) => {
-  const { name, phone, email, address, date_of_birth, gender } = req.body;
-  const query = 'INSERT INTO customers (branch, name, phone, email, address, date_of_birth, gender) VALUES (?, ?, ?, ?, ?, ?, ?)';
-  const values = [1, name, phone, email, address, date_of_birth, gender];
+  const {
+      name, phone, email, address, date_of_birth, gender,
+      left_eye_dv,
+      left_eye_nv,
+      right_eye_dv,
+      right_eye_nv,
+      left_eye_addition,
+       right_eye_addition
+  } = req.body;
 
-  db.query(query, values, (err, result) => {
+  const sql = `
+      INSERT INTO customers 
+      (branch, name, phone, email, address, date_of_birth, gender,
+      left_eye_dv_spherical, left_eye_dv_cylindrical, left_eye_dv_axis, left_eye_dv_vn,
+      left_eye_nv_spherical, left_eye_nv_cylindrical, left_eye_nv_axis, left_eye_nv_vn,
+      right_eye_dv_spherical, right_eye_dv_cylindrical, right_eye_dv_axis, right_eye_dv_vn,
+      right_eye_nv_spherical, right_eye_nv_cylindrical, right_eye_nv_axis, right_eye_nv_vn,
+      left_eye_addition, right_eye_addition
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
+  `;
+
+  const values = [
+      1, name, phone, email, address, date_of_birth, gender,
+      left_eye_dv.spherical,
+      left_eye_dv.cylindrical,
+      left_eye_dv.axis,
+      left_eye_dv.vn,
+      left_eye_nv.spherical,
+      left_eye_nv.cylindrical,
+      left_eye_nv.axis,
+      left_eye_nv.vn,
+      right_eye_dv.spherical,
+      right_eye_dv.cylindrical,
+      right_eye_dv.axis,
+      right_eye_dv.vn,
+      right_eye_nv.spherical,
+      right_eye_nv.cylindrical,
+      right_eye_nv.axis,
+      right_eye_nv.vn,
+      left_eye_addition,
+       right_eye_addition
+  ];
+
+  db.query(sql, values, (err, result) => {
       if (err) {
           console.error('Error adding customer:', err);
-          res.json({ Status: false, Error: err.message });
-      } else {
-          res.json({ Status: true, Result: result.insertId });
+          return res.status(500).json({ Error: 'Database error' });
       }
+      res.status(201).json({ Status: 'Customer added successfully' });
   });
 });
-
 
 
 // Delete a customer
-app.delete('/branch1/customers/:id', (req, res) => {
-    const { id } = req.params;
-    const query = 'DELETE FROM customers WHERE id = ?';
-    db.query(query, [id], (err, result) => {
-        if (err) {
-            res.json({ Status: false, Error: err.message });
-        } else {
-            res.json({ Status: true });
-        }
-    });
+app.delete('/branch1/customers/:customer_id', (req, res) => {
+  const { customer_id } = req.params;
+  const query = 'DELETE FROM customers WHERE customer_id = ?';
+  db.query(query, [customer_id], (err, result) => {
+      if (err) {
+          res.json({ Status: false, Error: err.message });
+      } else {
+          res.json({ Status: true });
+      }
+  });
 });
+
 
 
 // -----------------------------------------Sales-----------------------------------------------
 
 
+
+
 app.get('/shala/sales', (req, res) => {
   const query = `
-    SELECT s.id, s.sale_id, s.customer_name, s.customer_phone, s.created_at,
-           s.payment_method, s.order_discount, s.paid, s.product_details
+    SELECT s.sale_id, s.created_at, s.customer_id, s.product_details, s.order_discount, s.paid, s.payment_method
     FROM sales s
+    JOIN customers c ON s.customer_id = c.customer_id
   `;
 
   db.query(query, async (error, results) => {
@@ -262,9 +429,6 @@ app.get('/shala/sales', (req, res) => {
         // Parse product details JSON
         const productDetails = JSON.parse(sale.product_details || '[]');
         const productIds = productDetails.map(detail => detail.product_id);
-
-        // Debugging: Log product IDs
-        console.log('Product IDs:', productIds);
 
         if (productIds.length === 0) {
           return {
@@ -285,9 +449,6 @@ app.get('/shala/sales', (req, res) => {
             if (productError) {
               return reject(productError);
             }
-
-            // Debugging: Log product results
-            console.log('Product Results:', productResults);
 
             // Map product IDs to names
             const productNameMap = productResults.reduce((acc, product) => {
@@ -313,12 +474,37 @@ app.get('/shala/sales', (req, res) => {
       }
     }));
 
-    res.json(processedResults);
+    // Fetch customer details
+    const customerQuery = `
+      SELECT c.customer_id, c.name AS customer_name, c.phone AS customer_phone
+      FROM customers c
+    `;
+
+    db.query(customerQuery, (customerError, customerResults) => {
+      if (customerError) {
+        console.error('Error fetching customers data:', customerError);
+        return res.status(500).json({ error: 'An error occurred while fetching customer data.', details: customerError.message });
+      }
+
+      // Map customer details to each sale
+      const customerMap = customerResults.reduce((acc, customer) => {
+        acc[customer.customer_id] = {
+          customer_name: customer.customer_name,
+          customer_phone: customer.customer_phone // Use the correct key
+        };
+        return acc;
+      }, {});
+
+      const finalResults = processedResults.map(sale => ({
+        ...sale,
+        customer_name: customerMap[sale.customer_id]?.customer_name || 'Unknown',
+        customer_phone: customerMap[sale.customer_id]?.customer_phone || 'Unknown' // Corrected access to phone number
+      }));
+
+      res.json(finalResults);
+    });
   });
 });
-
-
-  
 
 // Get all products
 app.get('/shala/products', (req, res) => {
@@ -346,36 +532,62 @@ app.get('/shala/products/:id', (req, res) => {
       res.json(results[0]);
     });
   });
+
+
+  // Route to fetch all suppliers
+app.get('/shala/customers', (req, res) => {
+  db.query('SELECT * FROM customers', (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error fetching customers.' });
+    }
+    res.json(results);
+  });
+});
+
+// Route to fetch a specific supplier
+app.get('/shala/customers/:id', (req, res) => {
+  const customerId = req.params.id;
+  db.query('SELECT * FROM customers WHERE customer_id = ?', [customerId], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error fetching customer details.' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'customer not found.' });
+    }
+    res.json(results[0]);
+  });
+});
+
   
  
 
   const { v4: uuidv4 } = require('uuid'); // Import the UUID function
 
-// Add a new sale
-app.post('/shala/sales', (req, res) => {
-  const { customer_name, customer_phone, sales_data, payment_method, order_discount, paid } = req.body;
-  const sale_id = uuidv4(); // Generate a new UUID for sale_id
-  const branch = 1; // Branch ID is hardcoded as 1
 
-  // Prepare the product details as a JSON string
-  const product_details = JSON.stringify(sales_data);
-
-  // Create a query for inserting the sale
-  const query = `
-    INSERT INTO sales (branch, sale_id, customer_name, customer_phone, payment_method, order_discount, paid, product_details)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  // Execute the query with the prepared parameters
-  db.query(query, [branch, sale_id, customer_name, customer_phone, payment_method, order_discount, paid, product_details], (err, results) => {
-    if (err) {
-      console.error('Error inserting sale:', err);
-      return res.status(500).json({ error: 'Database error' });
-    }
-    res.json({ message: 'Sale added successfully' });
+  app.post('/shala/sales', (req, res) => {
+    const { customer_id,  customer_phone, sale_data, payment_method, order_discount, paid } = req.body;
+    const sale_id = uuidv4(); // Generate a new UUID for purchase_id
+    const branch = 1; // Branch ID is hardcoded as 1
+  
+    // Prepare the product details as a JSON string
+    const product_details = JSON.stringify(sale_data);
+  
+    // Create a query for inserting the purchase
+    const query = `
+      INSERT INTO sales (branch, sale_id,  customer_id,  customer_phone, payment_method, order_discount, paid, product_details)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+  
+    // Execute the query with the prepared parameters
+    db.query(query, [branch, sale_id,  customer_id,  customer_phone, payment_method, order_discount, paid, product_details], (err, results) => {
+      if (err) {
+        console.error('Error inserting sale:', err);
+        return res.status(500).json({ error: 'Database error', details: err.message });
+      }
+      res.json({ message: 'Sale successfully' });
+    });
   });
-});
-
+  
 
 // --------------------------------------------Supplier------------------------------------
 
@@ -592,135 +804,107 @@ app.get('/follow/suppliers', (req, res) => {
 
 
  
-
-// Add Purchase
-app.post('/follow/purchases', (req, res) => {
-  const { supplier_id, supplier_phone, purchase_data, payment_method, order_discount, paid } = req.body;
-
-  // Assuming purchase_data is an array of items
-  const purchaseItems = purchase_data.map(item => [
-    supplier_id,
-    item.product_id,
-    item.purchase_price,
-    item.quantity,
-    item.purchase_price * item.quantity,
-    order_discount,
-    paid,
-    payment_method,
-    new Date()
-  ]);
-
-  const query = `
-    INSERT INTO purchases (supplier_id, product_id, purchase_price, quantity, item_total, order_discount, paid, payment_method, created_at)
-    VALUES ?
-  `;
-
-  db.query(query, [purchaseItems], (error, results) => {
-    if (error) {
-      console.error('Error inserting purchase data:', error);
-      return res.status(500).json({ error: 'An error occurred while adding the purchase.', details: error.message });
-    }
-
-    res.json({ message: 'Purchase added successfully!' });
-  });
-});
-
   // --------------------------------------Transaction-------------------------------------------
 
 
 
-  app.get('/hamara/transaction', (req, res) => {
-    const salesQuery = `
-      SELECT
-        sale_id,
-        customer_name,
-        created_at,
-        payment_method,
-        paid AS amount,
-        product_details
-      FROM sales
-    `;
-  
-    db.query(salesQuery, (err, salesResults) => {
-      if (err) {
-        console.error('Error fetching sales:', err);
-        return res.status(500).send('Error fetching sales');
-      }
-  
-      // Extract product IDs from salesResults
-      const productIds = salesResults
-        .flatMap(sale => JSON.parse(sale.product_details).map(detail => detail.product_id))
-        .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
-  
-      if (productIds.length > 0) {
-        const productsQuery = `
+
+app.get('/hamara/transaction', (req, res) => {
+  const query = `
+    SELECT s.sale_id, s.created_at, s.customer_id, s.product_details, s.order_discount, s.paid, s.payment_method
+    FROM sales s
+    JOIN customers c ON s.customer_id = c.customer_id
+  `;
+
+  db.query(query, async (error, results) => {
+    if (error) {
+      console.error('Error fetching sales data:', error);
+      return res.status(500).json({ error: 'An error occurred while fetching sales data.', details: error.message });
+    }
+
+    // Process each sale
+    const processedResults = await Promise.all(results.map(async (sale) => {
+      try {
+        // Parse product details JSON
+        const productDetails = JSON.parse(sale.product_details || '[]');
+        const productIds = productDetails.map(detail => detail.product_id);
+
+        if (productIds.length === 0) {
+          return {
+            ...sale,
+            product_names: ''
+          };
+        }
+
+        // Fetch product names based on IDs
+        const productQuery = `
           SELECT id, name
           FROM products
           WHERE id IN (?)
         `;
-  
-        db.query(productsQuery, [productIds], (err, productsResults) => {
-          if (err) {
-            console.error('Error fetching products:', err);
-            return res.status(500).send('Error fetching products');
-          }
-  
-          // Create a mapping of product IDs to names
-          const productMap = productsResults.reduce((map, product) => {
-            map[product.id] = product.name;
-            return map;
-          }, {});
-  
-          // Add product names to salesResults
-          const salesWithProductNames = salesResults.map(sale => {
-            const productDetails = JSON.parse(sale.product_details);
-            const productNames = productDetails
-              .map(detail => productMap[detail.product_id])
-              .filter(name => name !== undefined)
-              .join(', ');
-  
-            return {
+
+        return new Promise((resolve, reject) => {
+          db.query(productQuery, [productIds], (productError, productResults) => {
+            if (productError) {
+              return reject(productError);
+            }
+
+            // Map product IDs to names
+            const productNameMap = productResults.reduce((acc, product) => {
+              acc[product.id] = product.name;
+              return acc;
+            }, {});
+
+            // Update product details with names
+            const updatedProductDetails = productDetails.map(detail => ({
+              ...detail,
+              product_name: productNameMap[detail.product_id] || 'Unknown'
+            }));
+
+            resolve({
               ...sale,
-              product_names: productNames
-            };
-          });
-  
-          res.json({
-            sales: salesWithProductNames,
-            products: productsResults
+              product_names: updatedProductDetails.map(detail => detail.product_name).join(', ')
+            });
           });
         });
-      } else {
-        res.json({
-          sales: salesResults,
-          products: []
-        });
+      } catch (err) {
+        console.error('Error processing sale:', err);
+        throw err;
       }
+    }));
+
+    // Fetch customer details
+    const customerQuery = `
+      SELECT c.customer_id, c.name AS customer_name, c.phone AS customer_phone
+      FROM customers c
+    `;
+
+    db.query(customerQuery, (customerError, customerResults) => {
+      if (customerError) {
+        console.error('Error fetching customers data:', customerError);
+        return res.status(500).json({ error: 'An error occurred while fetching customer data.', details: customerError.message });
+      }
+
+      // Map customer details to each sale
+      const customerMap = customerResults.reduce((acc, customer) => {
+        acc[customer.customer_id] = {
+          customer_name: customer.customer_name,
+          customer_phone: customer.customer_phone // Use the correct key
+        };
+        return acc;
+      }, {});
+
+      const finalResults = processedResults.map(sale => ({
+        ...sale,
+        customer_name: customerMap[sale.customer_id]?.customer_name || 'Unknown',
+        customer_phone: customerMap[sale.customer_id]?.customer_phone || 'Unknown' // Corrected access to phone number
+      }));
+
+      res.json(finalResults);
     });
   });
-  
+});
 
-
-  // -------------------------------------------------Barcode-------------------------------------
-
-
-  // app.get('/api/products/barcode/:barcode', (req, res) => {
-  //   const { barcode } = req.params;
-  //   const query = 'SELECT * FROM products WHERE barcode = ?';
-  
-  //   db.query(query, [barcode], (err, results) => {
-  //     if (err) {
-  //       console.error('Error fetching product:', err);
-  //       res.status(500).json({ message: 'Internal Server Error' });
-  //       return;
-  //     }
-  //     if (results.length > 0) {
-  //       res.json(results[0]);
-  //     } else {
-  //       res.status(404).json({ message: 'Product not available' });
-  //     }
-  //   });
-  // });
 
 
 
@@ -750,20 +934,21 @@ app.get('/doll/products/:product_id', (req, res) => {
 // -----------------------------------------bill print  sale-------------------------
 
 
+// Route to fetch sale details by sale_id
+app.get('/wala/shala/sale-details/:sale_id', (req, res) => {
+  const saleId = req.params.sale_id;
 
-app.get('/shala/sale-details/:id', (req, res) => {
-  const saleId = req.params.id;
+  // Query to fetch the sale details by sale_id
   const query = `
-    SELECT s.id, s.sale_id, s.customer_name, s.customer_phone, s.created_at,
-           s.payment_method, s.order_discount, s.paid, s.product_details
+    SELECT s.sale_id, s.created_at, s.customer_id, s.product_details, s.order_discount, s.paid, s.payment_method
     FROM sales s
-    WHERE s.id = ?
+    WHERE s.sale_id = ?
   `;
 
-  db.query(query, [saleId], (error, results) => {
+  db.query(query, [saleId], async (error, results) => {
     if (error) {
-      console.error('Error fetching sale details:', error);
-      return res.status(500).json({ error: 'An error occurred while fetching sale details.', details: error.message });
+      console.error('Error fetching sale data:', error);
+      return res.status(500).json({ error: 'An error occurred while fetching sale data.', details: error.message });
     }
 
     if (results.length === 0) {
@@ -771,56 +956,83 @@ app.get('/shala/sale-details/:id', (req, res) => {
     }
 
     const sale = results[0];
+    const productDetails = JSON.parse(sale.product_details || '[]');
+    const productIds = productDetails.map(detail => detail.product_id);
 
-    try {
-      // Parse product details JSON
-      const productDetails = JSON.parse(sale.product_details || '[]');
-      const productIds = productDetails.map(detail => detail.product_id);
+    // Fetch product names based on IDs
+    const productQuery = `
+      SELECT id, name, price
+      FROM products
+      WHERE id IN (?)
+    `;
 
-      // If no product IDs, return the sale details with empty products
-      if (productIds.length === 0) {
-        return res.json({
-          ...sale,
-          products: []
-        });
+    db.query(productQuery, [productIds], (productError, productResults) => {
+      if (productError) {
+        console.error('Error fetching product data:', productError);
+        return res.status(500).json({ error: 'An error occurred while fetching product data.', details: productError.message });
       }
 
-      // Fetch product names based on IDs
-      const placeholders = productIds.map(() => '?').join(',');
-      const productQuery = `
-        SELECT id, name, price
-        FROM products
-        WHERE id IN (${placeholders})
+      const productNameMap = productResults.reduce((acc, product) => {
+        acc[product.id] = { name: product.name, price: product.price };
+        return acc;
+      }, {});
+
+      // Update product details with names and prices
+      const updatedProductDetails = productDetails.map(detail => ({
+        ...detail,
+        product_name: productNameMap[detail.product_id]?.name || 'Unknown',
+        product_price: productNameMap[detail.product_id]?.price || 'Unknown'
+      }));
+
+      // Fetch customer details
+      const customerQuery = `
+        SELECT c.name AS customer_name, c.phone AS customer_phone,
+              left_eye_dv_spherical, left_eye_dv_cylindrical, left_eye_dv_axis, left_eye_dv_vn,
+      left_eye_nv_spherical, left_eye_nv_cylindrical, left_eye_nv_axis, left_eye_nv_vn,
+      right_eye_dv_spherical, right_eye_dv_cylindrical, right_eye_dv_axis, right_eye_dv_vn,
+      right_eye_nv_spherical, right_eye_nv_cylindrical, right_eye_nv_axis, right_eye_nv_vn,
+      left_eye_addition,right_eye_addition
+        FROM customers c
+        WHERE c.customer_id = ?
       `;
 
-      db.query(productQuery, productIds, (productError, productResults) => {
-        if (productError) {
-          console.error('Error fetching product names:', productError);
-          return res.status(500).json({ error: 'An error occurred while fetching product names.', details: productError.message });
+      db.query(customerQuery, [sale.customer_id], (customerError, customerResults) => {
+        if (customerError) {
+          console.error('Error fetching customer data:', customerError);
+          return res.status(500).json({ error: 'An error occurred while fetching customer data.', details: customerError.message });
         }
 
-        // Map product IDs to names
-        const productNameMap = productResults.reduce((acc, product) => {
-          acc[product.id] = { name: product.name, price: product.price };
-          return acc;
-        }, {});
+        const customer = customerResults[0] || {};
 
-        // Update product details with names
-        const updatedProductDetails = productDetails.map(detail => ({
-          ...detail,
-          product_name: productNameMap[detail.product_id]?.name || 'Unknown',
-          sale_price: productNameMap[detail.product_id]?.price || 'Unknown'
-        }));
-
-        res.json({
+        // Combine all data
+        const saleDetails = {
           ...sale,
-          product_details: JSON.stringify(updatedProductDetails)
-        });
+          product_details: updatedProductDetails,
+          customer_name: customer.customer_name || 'Unknown',
+          customer_phone: customer.customer_phone || 'Unknown',
+          spherical_dv: customer.left_eye_dv_spherical,
+                cylindrical_dv: customer.left_eye_dv_cylindrical,
+                axis_dv: customer.left_eye_dv_axis,
+                vn_dv: customer.left_eye_dv_vn,
+                spherical_nv: customer.left_eye_nv_spherical,
+                cylindrical_nv: customer.left_eye_nv_cylindrical,
+                axis_nv: customer.left_eye_nv_axis,
+                vn_nv: customer.left_eye_nv_vn,
+                spherical_dv: customer.right_eye_dv_spherical,
+                cylindrical_dv: customer.right_eye_dv_cylindrical,
+                axis_dv: customer.right_eye_dv_axis,
+                vn_dv: customer.right_eye_dv_vn,
+                spherical_nv: customer.right_eye_nv_spherical,
+                cylindrical_nv: customer.right_eye_cylindrical,
+                axis_nv: customer.right_eye_nv_axis,
+                vn_nv: customer.right_eye_vn_nv,
+                addition: customer.left_eye_addition,
+                addition: customer.right_eye_addition
+        };
+
+        res.json(saleDetails);
       });
-    } catch (err) {
-      console.error('Error processing sale:', err);
-      res.status(500).json({ error: 'An error occurred while processing sale details.', details: err.message });
-    }
+    });
   });
 });
 

@@ -15,6 +15,7 @@
   text-align: center;
   margin-top: -10px;
 }
+
 #scc {
   text-align: center;
   font-family: 'Arial', sans-serif;
@@ -69,11 +70,45 @@
   background-color: #f2f2f2;
   color: #333;
 }
-
+.sno{
+  text-align: center;
+  font-weight: bold;
+}
 .products-table thead th {
   background-color: #e6e6e6;
 }
 
+.in {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+ 
+  font-weight: bold;
+  
+  /* margin-left: 0px; */
+  /* padding: 30px; */
+}
+
+.logo img {
+  max-height: 50px; /* Adjust the max height as needed */
+  width: auto; /* Maintains aspect ratio */
+  margin-left: 10px;
+  /* margin-top: -1000px; */
+  /* margin-right: 300px; */
+}
+
+.c-details {
+  text-align: center;
+}
+
+.gst-no {
+  text-align: right;
+  margin-top: -50px;
+  /* margin-top: -100px; */
+  /* margin-right: 200px; */
+  /* display: inline; */
+  /* justify-content: flex-end; */
+}
 .total-label {
   text-align: right;
   font-weight: bold;
@@ -83,8 +118,13 @@
   font-weight: bold;
   color: #333;
 }
+.boor{
+  border: 1px solid black;
+  /* margin: 20px; */
+  padding:30px;
 
-.print-bill-button {
+}
+.p-bill-button {
   display: inline-block;
   padding: 10px 20px;
   font-size: 16px;
@@ -96,7 +136,7 @@
   cursor: pointer;
   text-align: center;
   margin-top: 20px;
-  margin-left: 270px;
+  margin-left: 370px;
 }
 
 .print-bill-button:hover {
@@ -147,7 +187,7 @@
     border: 1px solid #333;
   }
 
-  .print-bill-button {
+  .p-bill-button {
     display: none;
   }
 }

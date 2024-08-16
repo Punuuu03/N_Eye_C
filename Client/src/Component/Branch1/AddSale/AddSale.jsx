@@ -5,16 +5,17 @@ import { useNavigate } from 'react-router-dom';
 
 const createNewSaleItem = () => ({
   productId: '',
-  productDetails: { price: '', stock: '' },
-  salePrice: '',
-  quantity: '',
+  productDetails: { price: '0', stock: '0' },
+  salePrice: '0', // Start with salePrice as 0
+  quantity: '0',
   itemTotal: 0,
 });
 
 const AddSale = () => {
   const navigate = useNavigate();
+  const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
-  const [customerName, setCustomerName] = useState('');
+  const [customerId, setCustomerId] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [saleItems, setSaleItems] = useState([createNewSaleItem()]);
   const [paymentMethod, setPaymentMethod] = useState('Cash');
@@ -24,6 +25,16 @@ const AddSale = () => {
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(0);
 
   useEffect(() => {
+    // Fetch customers
+    axios.get('http://localhost:3000/shala/customers')
+      .then(response => {
+        setCustomers(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching customers:', error);
+      });
+
+    // Fetch products
     axios.get('http://localhost:3000/shala/products')
       .then(response => {
         setProducts(response.data);
@@ -37,6 +48,19 @@ const AddSale = () => {
     calculateTotals(saleItems);
   }, [orderDiscount, saleItems]);
 
+  const handleCustomerChange = async (event) => {
+    const id = event.target.value;
+    setCustomerId(id);
+    try {
+      const response = await axios.get(`http://localhost:3000/shala/customers/${id}`);
+      const { phone } = response.data;
+      setCustomerPhone(phone);
+    } catch (error) {
+      console.error('Error fetching customer details:', error);
+      setCustomerPhone(''); // Clear phone number if error occurs
+    }
+  };
+
   const handleProductChange = async (index, event) => {
     const id = event.target.value;
     const newSaleItems = [...saleItems];
@@ -46,15 +70,13 @@ const AddSale = () => {
       const { price, stock } = response.data;
       if (stock === 0) {
         alert('Stock is not available. Select another product.');
-        newSaleItems[index].productId = '';
-        newSaleItems[index].productDetails = { price: '', stock: '' };
-        setSaleItems(newSaleItems);
-        return;
+        newSaleItems[index] = createNewSaleItem();
+      } else {
+        newSaleItems[index].productDetails = { price, stock };
+        newSaleItems[index].salePrice = '0'; // Set salePrice to 0 initially
+        newSaleItems[index].quantity = '0';
+        newSaleItems[index].itemTotal = 0;
       }
-      newSaleItems[index].productDetails = { price, stock };
-      newSaleItems[index].salePrice = '';
-      newSaleItems[index].quantity = '';
-      newSaleItems[index].itemTotal = 0;
       setSaleItems(newSaleItems);
       calculateTotals(newSaleItems);
     } catch (error) {
@@ -64,21 +86,19 @@ const AddSale = () => {
 
   const handleSaleItemChange = (index, field, value) => {
     const newSaleItems = [...saleItems];
-    newSaleItems[index][field] = value;
-
+    
     if (field === 'quantity') {
-      const stock = parseFloat(newSaleItems[index].productDetails.stock) || 0;
       const quantity = parseFloat(value) || 0;
+      const stock = parseFloat(newSaleItems[index].productDetails.stock) || 0;
+  
       if (quantity > stock) {
         alert('Quantity exceeds available stock. Please adjust.');
-        newSaleItems[index].quantity = '';
-        newSaleItems[index].itemTotal = 0;
-      } else {
-        calculateItemTotal(index, newSaleItems);
+        return; // Prevent further updates if the quantity exceeds stock
       }
-    } else {
-      calculateItemTotal(index, newSaleItems);
     }
+  
+    newSaleItems[index][field] = value;
+    calculateItemTotal(index, newSaleItems);
     setSaleItems(newSaleItems);
   };
 
@@ -109,43 +129,50 @@ const AddSale = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const salesData = saleItems.map(item => ({
-        product_id: item.productId,
-        sale_price: item.salePrice,
-        quantity: item.quantity,
+    const saleData = saleItems.map(item => ({
+      product_id: item.productId,
+      sale_price: item.salePrice,
+      quantity: item.quantity,
     }));
 
     axios.post('http://localhost:3000/shala/sales', {
-        customer_name: customerName,
-        customer_phone: customerPhone,
-        sales_data: salesData,
-        payment_method: paymentMethod,
-        order_discount: orderDiscount,
-        paid
+      customer_id: customerId,
+      customer_phone: customerPhone,
+      sale_data: saleData,
+      payment_method: paymentMethod,
+      order_discount: orderDiscount,
+      paid,
     })
     .then(response => {
-        alert(response.data.message);
-        navigate('/Component/Branch1/SaleList/SaleList'); // Navigate to the Sale List page
-        window.location.reload(); // Reset the page
+      alert(response.data.message);
+      navigate('/Component/Branch1/SaleList/SaleList'); // Navigate to the Sale List page
     })
-    .catch(error => {
-        console.error('Error submitting sale:', error);
-    });
+    .catch(error => console.error('Error submitting sale:', error));
   };
 
   return (
     <form onSubmit={handleSubmit} className="add-sale-form">
       <h2>Sale Order</h2>
       <div className="customer-info">
-        <div className="input-group">
-          <label>Customer Name:</label>
-          <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} required />
-        </div>
-        <div className="input-group">
-          <label>Customer Phone Number:</label>
-          <input type="text" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} required />
+        <div className="input-group-row">
+          <div className="input-group">
+            <label>Customer:</label>
+            <select value={customerId} onChange={handleCustomerChange} required>
+              <option value="">Select Customer</option>
+              {customers.map((customer) => (
+                <option key={customer.customer_id} value={customer.customer_id}>
+                  {customer.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="input-group">
+            <label>Customer Phone Number:</label>
+            <input type="text" value={customerPhone} readOnly />
+          </div>
         </div>
       </div>
+
       <button type="button" className="new-row-btn" onClick={handleAddProduct}>+ New Row</button>
       <table className="sale-items-table">
         <thead>
@@ -166,68 +193,73 @@ const AddSale = () => {
               <td>{index + 1}</td>
               <td>
                 <select value={item.productId} onChange={(e) => handleProductChange(index, e)} required>
-                  <option value="">Select</option>
-                  {Array.isArray(products) && products.map(product => (
+                  <option value="">Select Product</option>
+                  {products.map(product => (
                     <option key={product.id} value={product.id}>{product.name}</option>
                   ))}
                 </select>
               </td>
+              <td className='MRP'>{item.productDetails.price}</td>
               <td>
-                <input type="text" value={item.productDetails.price} readOnly />
-              </td>
-              <td>
-                <input 
-                  type="number" 
-                  value={item.salePrice} 
-                  onChange={(e) => handleSaleItemChange(index, 'salePrice', e.target.value)} 
-                  required 
+                <input
+                  type="number"
+                  value={item.salePrice}
+                  onChange={(e) => handleSaleItemChange(index, 'salePrice', e.target.value)}
+                  required
                 />
               </td>
               <td>
-                <input 
-                  type="number" 
-                  value={item.quantity} 
-                  onChange={(e) => handleSaleItemChange(index, 'quantity', e.target.value)} 
-                  required 
+                <input
+                  type="number"
+                  value={item.quantity}
+                  onChange={(e) => handleSaleItemChange(index, 'quantity', e.target.value)}
+                  required
                 />
               </td>
+              <td className='MRP'>{item.productDetails.stock}</td>
+              <td className='MRP'>{item.itemTotal.toFixed(2)}</td>
               <td>
-                <input  type="text" value={item.productDetails.stock} readOnly />
-              </td>
-              <td  id='item'>{item.itemTotal.toFixed(2)}</td>
-              <td>
-                <button type="button" onClick={() => handleRemoveProduct(index)}>Delete</button>
+                <button type="button" onClick={() => handleRemoveProduct(index)}>Remove</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="summary-info">
-        <div className="input-group" >
-          <label >Payment Method:</label>
-          <select id='payment' value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} required>
+      <div className="totals">
+        <div className="input-group">
+          <label>Payment Method:</label>
+          <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} required>
             <option value="Cash">Cash</option>
             <option value="UPI">UPI</option>
           </select>
         </div>
         <div className="input-group">
           <label>Order Total:</label>
-          <input type="number" value={orderTotal.toFixed(2)} readOnly />
+          <input type="text" value={orderTotal.toFixed(2)} readOnly />
         </div>
         <div className="input-group">
-          <label>Discount (%):</label>
-          <input type="number" value={orderDiscount} onChange={(e) => setOrderDiscount(parseFloat(e.target.value) || 0)} />
+          <label>Order Discount (%):</label>
+          <input
+            type="number"
+            value={orderDiscount}
+            onChange={(e) => setOrderDiscount(parseFloat(e.target.value))}
+          />
         </div>
         <div className="input-group">
           <label>Total After Discount:</label>
-          <input type="number" value={totalAfterDiscount.toFixed(2)} readOnly />
+          <input type="text" value={totalAfterDiscount.toFixed(2)} readOnly />
         </div>
         <div className="input-group">
-          <label>Paid Amount:</label>
-          <input type="number" value={paid} onChange={(e) => setPaid(parseFloat(e.target.value) || 0)} required />
+          <label>Paid:</label>
+          <input
+            type="number"
+            value={paid}
+            onChange={(e) => setPaid(parseFloat(e.target.value))}
+            required
+          />
         </div>
+        <button type="submit" id='addsale-save-btn'>Save Sale</button>
       </div>
-      <button type="submit" id="addsale-save-btn">Save</button>
     </form>
   );
 };

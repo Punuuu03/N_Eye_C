@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import './PurchaseDetails.css'; // Assuming you have CSS for styling
+import kolo from '../../../assets/logo.jpg';
+
 
 const PurchaseDetails = () => {
   const { id } = useParams(); // Use the ID parameter from the route
@@ -46,17 +48,22 @@ const PurchaseDetails = () => {
 
   return (
     <div className="sale-details-container">
-      <button onClick={() => window.print()} className="print-bill-button">
-        Print Bill
-      </button>
-      <h2 id='scc'>New Eye Care</h2>
-      <h6 className='ho'>Optics & Contact Lense Clinic</h6>
-      <p className='add'>Add: S.No. 34/2 Gurudware Chowk, Balaji Nagar, 
-        <br/>Near Akurdi Railway Station, Pune-411033</p>
-      <p className='em'>8669309353 Email: neweyecare1@gmail.com</p>
+      <div className='boor'>
+      <div className='in'>
+      <div className="logo">
+            <img src={kolo} className="kolo" alt="Company Logo" />
+          </div>
+          <div className="c-details">
+            <h2>New Eye Care</h2>
+            <p>9922177297</p>
+          </div>
+          <div className="gst-no">
+            <p>GSTIN: </p>
+          </div>
+          </div>
       <hr/>
       
-      <div className="customer-info">
+      <div className="supplier-info">
         <div>
           <strong>Supplier Name:</strong> {purchase.supplier_name}
         </div>
@@ -107,9 +114,15 @@ const PurchaseDetails = () => {
         </div>
       </div>
       <hr/>
-      <p className='th'>Thank you for your purchase</p>
-      <p className='te'>Technopuls Softwares | Contact: +918669048580</p>
+      <div className='terms'>
+        <p><strong>Terms & Conditions:</strong></p>
+      </div>
+      </div>
+      <button onClick={() => window.print()} className="p-bill-button">
+        Print Bill
+      </button>
     </div>
+    
   );
 };
 

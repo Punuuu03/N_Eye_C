@@ -61,14 +61,14 @@ const Login = () => {
           required 
         />
                         </div>
-                        <div id="remember-forgot" className="remember-forgot">
+                        {/* <div id="remember-forgot" className="remember-forgot"> */}
                       
-                            <label htmlFor="remember-me">
-                                <input type="checkbox" id="remember-me" />
-                                Remember me
-                            </label>
+                            {/* <label htmlFor="remember-me"> */}
+                                {/* <input type="checkbox" id="remember-me" /> */}
+                                {/* Remember me */}
+                            {/* </label> */}
                             {/* <Link id="forgot-password-link" to="/forgot-password">Forgot Password?</Link> */}
-                        </div>
+                        {/* </div> */}
                         <br></br>
                         <button type="submit" id="login-button" className="login-button">Login</button>
                     </form>

@@ -15,10 +15,9 @@ const TransactionList = () => {
     const fetchSales = async () => {
       try {
         const response = await axios.get('http://localhost:3000/hamara/transaction');
-        const salesData = response.data.sales; // Ensure the correct structure
-        setSales(salesData);
-        setFilteredSales(salesData);
-      } catch (error) {
+        setSales(response.data);
+        setFilteredSales(response.data);
+      } catch (error) {xa
         setError('Error fetching sales.');
         console.error('Error fetching sales:', error);
       }
@@ -46,7 +45,11 @@ const TransactionList = () => {
     pageNumbers.push(i);
   }
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= pageNumbers.length) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   return (
     <div id="transaction-list-container" className="transaction-list-container">
@@ -96,7 +99,7 @@ const TransactionList = () => {
               <td>{sale.product_names}</td>
               <td>{new Date(sale.created_at).toLocaleDateString()}</td>
               <td>{sale.payment_method}</td>
-              <td>{sale.amount}</td>
+              <td>{sale.paid}</td> {/* Ensure amount is handled */}
             </tr>
           ))}
         </tbody>

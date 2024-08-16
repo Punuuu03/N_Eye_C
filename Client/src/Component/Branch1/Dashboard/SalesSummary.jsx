@@ -27,7 +27,7 @@ const SalesSummary = () => {
 
   return (
     <div className="sales-summary">
-      <h2>Today's Sales</h2>
+      <h2>Sales</h2>
       <div className="summary-card total-sales">
         <div className="icon">📊</div>
         <div className="details">

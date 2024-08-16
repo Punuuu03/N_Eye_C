@@ -5,7 +5,6 @@
     flex-direction: column;
     align-items: center;
     margin-left: 50px;
-    /* margin-top: -60px; */
     background-color: #c2cbe5b4;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -18,7 +17,6 @@
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    /* margin-bottom: 0px; */
     margin-right: 1310px;
     font-size: 20px;
     width: 140px;
@@ -30,20 +28,16 @@
 
 /* Heading styles */
 #hd {
-    font-size: 30px; /* Adjust font size as needed */
-    margin-bottom: 10px; /* Space below the heading */
+    font-size: 30px;
+    margin-bottom: 10px;
     text-align: left; 
     margin-right: 1260px;
-    /* margin-top:20px; */
-    
 }
 
 /* Search Bar styles */
 .search-container {
-    margin-bottom: 20px; /* Space below the search bar */
+    margin-bottom: 20px;
     align-items: center;
-    /* margin-top: -800px; */
-    
 }
 
 .search-input {
@@ -51,16 +45,16 @@
     font-size: 18px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    width: 100%; /* Make the input take full width of its container */
-    box-sizing: border-box; /* Include padding in width calculation */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Table styles */
 #customer-table {
-    width: 1455px; /* Adjust table width to fit the container */
+    width: 1455px;
     border-collapse: separate;
-    border-spacing: 0 10px; /* Add spacing between rows */
-    table-layout: fixed; /* Distribute columns evenly */
+    border-spacing: 0 10px;
+    table-layout: fixed; /* Ensures columns have a fixed width */
 }
 
 /* Table header and cell styles */
@@ -68,66 +62,26 @@
 #customer-table td {
     padding: 8px;
     text-align: center;
-    height: 50px; /* Increase the height of the table rows */
+    height: 50px;
     font-size: 18px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    width: calc(100% / 8); /* Adjust based on number of columns */
+    word-wrap: break-word; /* Wraps long words onto the next line */
+    overflow-wrap: break-word; /* Same as word-wrap, included for broader support */
+    word-break: break-word; /* Breaks long words if necessary */
 }
-
-/* Set specific width for ID column */
-#customer-table th:nth-child(1),
-#customer-table td:nth-child(1) {
-    width: 50px; /* Set a smaller width for the ID column */
-}
-
-/* Set specific width for Email and Address columns */
-#customer-table th:nth-child(4),
-#customer-table td:nth-child(4) {
-    width: 200px; /* Increase the width for the Email column */
-}
-
-#customer-table th:nth-child(5),
-#customer-table td:nth-child(5) {
-    width: 300px; /* Increase the width for the Address column */
-}
-
-/* Adjust other column widths as needed */
-#customer-table th:nth-child(2),
-#customer-table td:nth-child(2) {
-    width: 150px; /* Set width for Customer Name column */
-}
-
-#customer-table th:nth-child(3),
-#customer-table td:nth-child(3) {
-    width: 150px; /* Set width for Phone Number column */
-}
-
-#customer-table th:nth-child(6),
-#customer-table td:nth-child(6) {
-    width: 150px; /* Set width for Date of Birth column */
-}
-
-#customer-table th:nth-child(7),
-#customer-table td:nth-child(7) {
-    width: 100px; /* Set width for Gender column */
-}
-
-#customer-table th:nth-child(8),
-#customer-table td:nth-child(8) {
-    width: 150px; /* Set width for Actions column */
-}
-
 
 #customer-table th {
     background-color: #f4f4f4;
     font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow effect to header cells */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     font-size: 20px;
 }
 
 /* Add shadow to each row */
 #customer-table tbody tr {
     background-color: #ffffff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow effect to rows */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Button styles */
@@ -140,14 +94,14 @@
 }
 
 .edit-button {
-    background-color: #c2cbe5b4; /* Light gray background for active/hover */
-    color: #586ad0; 
+    background-color: #c2cbe5b4;
+    color: #586ad0;
     margin-right: 5px;
     font-size: 18px;
 }
 
 .edit-button:hover {
-    background-color:  #827e7faf;
+    background-color: #827e7faf;
 }
 
 .delete-button {
@@ -162,10 +116,10 @@
 
 /* Footer container styles */
 .footer-container {
-    width: calc(100% - 250px); /* Adjust width to fit page minus sidebar */
+    width: calc(100% - 250px);
     position: fixed;
     bottom: 0;
-    left: 250px; /* Position footer to the right of the sidebar */
+    left: 250px;
     padding: 10px;
     background-color: #f8f9fa;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
@@ -206,4 +160,21 @@
 .pagination button:disabled {
     background-color: #e9ecef;
     cursor: not-allowed;
+}
+
+.action-icon {
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+.edit-icon {
+    color: #4c51af; /* Green for edit */
+}
+
+.delete-icon {
+    color: #F44336; /* Red for delete */
+}
+
+.action-icon:hover {
+    transform: scale(1.1);
 }

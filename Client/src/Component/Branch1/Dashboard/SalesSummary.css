@@ -51,10 +51,11 @@
 }
 
 .summary-card .label {
-  color: gray;
+  color: rgb(86, 83, 83);
   margin-bottom: 10px;
   font-size: 20px;
   margin-left: 60px;
+  text-align: center;
   /* padding-left: 70px; */
 }
 
@@ -62,8 +63,8 @@
   color: green;
 }
 
-.total-sales { background-color: #e8c5c5; }
-.total-orders { background-color: #eadbbf; }
-.total-discount { background-color: #d3ecd3; }
-.new-customers { background-color: #d7ceec; }
-.total-stock { background-color: #e0e6b4; }
+.total-sales { background-color: #dfa7a7; }
+.total-orders { background-color: #dac399; }
+.total-discount { background-color: #a7dba7; }
+.new-customers { background-color: #b3a2dc; }
+.total-stock { background-color: #d3db97; }

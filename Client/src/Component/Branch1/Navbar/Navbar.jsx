@@ -21,9 +21,8 @@ const Navbar = () => {
                     <h1 id="navbar-heading">New Eye Care</h1>
                 </div>
                 <div id="profile-section">
-                    <a href="https://wa.me/" target="_blank" rel="noopener noreferrer">
-                        <img src={whatsappLogo} alt="WhatsApp" id="whatsapp-logo" />
-                    </a>
+                <a href="https://wa.me/+911234567890/?text=Welcome to our new eye care shop! We're so glad you came to visit." target="_blank" rel="noopener noreferrer">
+                <img src={whatsappLogo} alt="WhatsApp" id="whatsapp-logo" /></a>
                     {email && <span id="profile-email">{email}</span>}
                     <img src={defaultProfilePic} alt="Profile" id="profile-logo" />
                 </div>

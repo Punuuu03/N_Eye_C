@@ -9,10 +9,8 @@
   width: 1660px;
   height: 800px;
   background-image: url('../../../assets/background_customer.png'); 
-    background-size: cover; /* Ensure the image covers the entire overlay */
-    background-position: center;
-    /* background-color:  #c2cbe5b4; */
-  /* border: 40px solid red; */
+  background-size: cover; /* Ensure the image covers the entire overlay */
+  background-position: center;
 }
 
 .scanner-container {
@@ -33,13 +31,10 @@
 
 #ph1 {
   font-size: 23px;
-  /* text-align: center; */
   margin-left: 200px;
-  margin-bottom:1000px;
+  margin-bottom: 1000px;
   font-weight: bold;
 }
-
-
 
 .product-table {
   width: 1300px;
@@ -47,7 +42,7 @@
   border-collapse: collapse;
   text-align: left;
   margin-left: 150px;
-  table-layout: fixed; /* Add this line */
+  table-layout: fixed; /* Ensure fixed layout for table cells */
   margin-top: -1000px;
 }
 
@@ -58,17 +53,20 @@
   height: 50px;
   font-size: 20px;
   border-radius: 10px;
+  word-wrap: break-word; /* Ensure long text wraps */
+  overflow-wrap: break-word; /* Handles wrapping for long words */
+  word-break: break-word; /* Breaks words if necessary to fit */
 }
 
 .product-table th {
   background-color: #ffffff;
   font-weight: bold;
-
 }
 
 .product-table tr:nth-child(even) {
   background-color: #ece7e7;
 }
+
 .product-table tr:nth-child(odd) {
   background-color: #f1ecec;
 }

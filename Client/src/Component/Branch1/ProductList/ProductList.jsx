@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaEdit } from 'react-icons/fa'; // Import the edit icon
 import './ProductList.css'; // Ensure you have appropriate styles for the product list
 
 const ProductList = () => {
@@ -82,8 +83,7 @@ const ProductList = () => {
                                 <th>Price</th>
                                 <th>Stock</th>
                                 <th>Product ID</th>
-                                <th>Left Eye</th> {/* Added left_eye column */}
-                                <th>Right Eye</th> {/* Added right_eye column */}
+                                {/* Removed Left Eye and Right Eye columns */}
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -95,11 +95,13 @@ const ProductList = () => {
                                     <td>{product.name}</td>
                                     <td>{product.price}</td>
                                     <td>{product.stock}</td>
-                                    <td>{product.product_id}</td> {/* Product ID */}
-                                    <td>{product.left_eye}</td> {/* Left Eye */}
-                                    <td>{product.right_eye}</td> {/* Right Eye */}
+                                    <td>{product.product_id}</td>
+                                    {/* Removed Left Eye and Right Eye cells */}
                                     <td>
-                                        <button className="action-button edit-button" onClick={() => handleEdit(product.id)}>Edit</button>
+                                        <FaEdit
+                                            className="action-icon edit-icon"
+                                            onClick={() => handleEdit(product.id)}
+                                        />
                                     </td>
                                 </tr>
                             ))}

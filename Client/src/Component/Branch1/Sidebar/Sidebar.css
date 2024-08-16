@@ -8,6 +8,7 @@
   flex-direction: column;
   padding: 20px;
   overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+  overflow-x: hidden;
   position: fixed; /* Fix the sidebar to the left of the page */
   top: 40px; 
   left: 0;
@@ -97,6 +98,7 @@
   font-weight: bold; /* Make text bold */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect for logout button */
+  /* margin-top: -200px; */
 }
 
 .logout:hover {

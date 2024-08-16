@@ -76,6 +76,9 @@
     height: 55px;
     font-size: 18px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    word-wrap: break-word; /* Wrap long words onto the next line */
+    overflow-wrap: break-word; /* Ensure text wraps within the cell */
+    word-break: break-word; /* Break words if needed to fit */
 }
 
 #supplier-table th {
